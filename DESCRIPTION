@@ -1,0 +1,12 @@
+Package: StepSift
+Type: Package
+Title: Stepwise Variance Regression and Variance Explained Calculation
+Version: 0.1.0
+Author: Kieran Phelan <phelankj@mail.uc.edu>
+Maintainer: Kieran Phelan <phelankj@mail.uc.edu>
+Description: This package provides functions to calculate variance explained by covariates and perform stepwise variance regression on RNA-seq data.
+License: GPL-3
+Encoding: UTF-8
+Imports:
+  DESeq2, tidyverse, Biobase, stringi, plyr, PCAtools, scales, ggplot2
+RoxygenNote: 7.3.2
