@@ -1,0 +1,71 @@
+setwd("V:/Kieran_OPAR_Project/Nocturnal_Asthma/CYCLOPS")
+load('Dat.RData')
+dat <- dat.abund.norm.voom
+
+setwd("V:/Kieran_OPAR_Project/Nocturnal_Asthma/CYCLOPS/nCV")
+library(nCV)
+library(tibble)
+counts <- dat$E
+clock_genes <- c("ARNTL", "CLOCK", "NPAS2", "NR1D1", "CIART", "DBP", "PER1", "CRY2", "PER2", "CRY1", "USP2", "TSC22D3")
+int <- intersect(rownames(counts), clock_genes)
+clock_df <- as.data.frame(counts[int,])
+clock_df <- clock_df %>% rownames_to_column(var = 'geneSym')
+counts <- as.data.frame(counts)
+counts <- counts %>% rownames_to_column(var = 'geneSym')
+
+#Create clock gene correlation data frame
+# Remove the geneSym column to avoid including it in the correlation calculation
+numeric_df <- clock_df[, -1]
+
+# Calculate the correlation matrix
+cor_matrix <- cor(t(numeric_df))
+
+# Assign gene names as row and column names
+rownames(cor_matrix) <- clock_df$geneSym
+colnames(cor_matrix) <- clock_df$geneSym
+cor_matrix <- as.data.frame(cor_matrix)
+cor_matrix <- cor_matrix %>% rownames_to_column(var = 'geneSym')
+
+cgenes = c("ARNTL", "CLOCK", "NPAS2", "CRY1", "NR1D1", "CIART", "DBP", "PER1", "CRY2", "PER2")
+
+#Run nCVnet
+nCV <- nCVnet(
+  inputD = counts,
+  benchD = mClockD,
+  hs = T
+)
+nCV$zstat
+
+#nCVgene
+nCV_gene <- nCVgene(
+  inputD = counts,
+  cgenes = counts$geneSym
+)
+
+#CCMapp
+write.csv(counts, file = 'nCV_counts.csv')
+write.csv(nCV$cmatrix, file = 'nCV_Cor_Mat.csv')
+# load 'shiny' package
+library(shiny)
+
+# the easy way to run this app 
+runGitHub("CCMapp", "gangwug")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

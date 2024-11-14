@@ -1,5 +1,6 @@
-#' Install Required Packages
+#' Install Required Packages 
 #' This function checks if the necessary packages are installed and installs them if not.
+#' It uses BiocManager to install both Bioconductor and CRAN packages.
 #' @export
 install_required_packages <- function() {
   required_packages <- c("DESeq2", "tidyverse", "Biobase", "stringi", "plyr", "PCAtools", "scales", "ggplot2")
@@ -9,7 +10,11 @@ install_required_packages <- function() {
   
   # Install missing packages
   if(length(missing_packages)) {
-    install.packages(missing_packages)
+    # Install Bioconductor and CRAN packages using BiocManager
+    if (!requireNamespace("BiocManager", quietly = TRUE)) {
+      install.packages("BiocManager")
+    }
+    BiocManager::install(missing_packages)
   }
   
   # Load all required packages

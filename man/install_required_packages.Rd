@@ -2,12 +2,14 @@
 % Please edit documentation in R/install_packages.R
 \name{install_required_packages}
 \alias{install_required_packages}
-\title{Install Required Packages
-This function checks if the necessary packages are installed and installs them if not.}
+\title{Install Required Packages 
+This function checks if the necessary packages are installed and installs them if not.
+It uses BiocManager to install both Bioconductor and CRAN packages.}
 \usage{
 install_required_packages()
 }
 \description{
-Install Required Packages
+Install Required Packages 
 This function checks if the necessary packages are installed and installs them if not.
+It uses BiocManager to install both Bioconductor and CRAN packages.
 }
