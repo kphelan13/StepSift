@@ -1,7 +1,7 @@
 #' Variance Explained Function
 #' Calculate the percent variation associated with any covariate of interest
 #'
-#' @param counts Matrix of normalized RNA-seq data with genes in rows and samples in columns.
+#' @param data Matrix of normalized RNA-seq data with genes in rows and samples in columns.
 #' @param metadata Dataframe of metadata for RNA-seq samples. Samples should be in rows and covariates in columns.
 #' @param covariates List of covariates in `metadata` to be assessed.
 #' @param numeric_covariates Character vector of covariates that are numeric; others will be treated as factors.
@@ -13,11 +13,11 @@
 #' @export
 #' @examples
 #' # Example usage:
-#' PVE(counts = my_counts_matrix, metadata = my_metadata_df,
+#' PVE(data = my_counts_matrix, metadata = my_metadata_df,
 #'     covariates = c("Age", "Sex"), numeric_covariates = "Age",
 #'     cutoff = 5, output_dir = "path/to/output", rank = 10)
 
-PVE <- function(counts, metadata, covariates, numeric_covariates, cutoff = NULL, output_dir, rank = 10) {
+PVE <- function(data, metadata, covariates, numeric_covariates, cutoff = NULL, output_dir, rank = 10) {
   library(DESeq2)
   library(tidyverse)
   library(Biobase)
@@ -36,7 +36,7 @@ PVE <- function(counts, metadata, covariates, numeric_covariates, cutoff = NULL,
     mutate_if(is.integer, as.factor)
   
   # Perform PCA
-  pca_data <- pca(counts, metadata = metadata, removeVar = 0.1, scale = TRUE, rank = rank)
+  pca_data <- pca(data, metadata = metadata, removeVar = 0.1, scale = TRUE, rank = rank)
   
   # Create scree plot
   screeplot(pca_data, axisLabSize = 9)

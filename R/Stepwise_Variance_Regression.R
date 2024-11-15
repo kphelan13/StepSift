@@ -1,21 +1,20 @@
 #' Stepwise Variance Regression
 #' Iterative regression to assess covariate variance colinearilty
 #'
-#' @param counts Matrix of normalized RNA-seq data with genes in rows and samples in columns.
+#' @param data Matrix of normalized RNA-seq data with genes in rows and samples in columns.
 #' @param metadata Dataframe of metadata for RNA-seq samples. Samples should be in rows and covariates in columns.
 #' @param covariates List of covariates in `metadata` to be assessed.
 #' @param numeric_covariates Character vector of covariates that are numeric; others will be treated as factors.
-#' @param cutoff Optional threshold for a horizontal line in the variance barplot. Default is NULL.
 #' @param output_dir Path to save output files.
 #' @param rank Integer specifying the number of PCs to retain (from PCAtools). Default is 10. Use NULL for all PCs.
 #' 
-#' @return Dataframe with `variable` and `variance_explained` columns; generates a screeplot and a variance barplot.
+#' @return Dataframe of covariates ordered by greatest association with variance after each iterative regression.
 #' @export
 #' @examples
 #' # Example usage:
-#' PVE(counts = my_counts_matrix, metadata = my_metadata_df,
+#' SVR(data = my_counts_matrix, metadata = my_metadata_df,
 #'     covariates = c("Age", "Sex"), numeric_covariates = "Age",
-#'     cutoff = 5, output_dir = "path/to/output", rank = 10)
+#'     output_dir = "path/to/output", rank = 10)
 
 SVR <- function(data, metadata, covariates, numeric_covariates, output_dir, rank = 10) {
   

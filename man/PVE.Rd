@@ -6,7 +6,7 @@
 Calculate the percent variation associated with any covariate of interest}
 \usage{
 PVE(
-  counts,
+  data,
   metadata,
   covariates,
   numeric_covariates,
@@ -16,7 +16,7 @@ PVE(
 )
 }
 \arguments{
-\item{counts}{Matrix of normalized RNA-seq data with genes in rows and samples in columns.}
+\item{data}{Matrix of normalized RNA-seq data with genes in rows and samples in columns.}
 
 \item{metadata}{Dataframe of metadata for RNA-seq samples. Samples should be in rows and covariates in columns.}
 
@@ -39,7 +39,7 @@ Calculate the percent variation associated with any covariate of interest
 }
 \examples{
 # Example usage:
-PVE(counts = my_counts_matrix, metadata = my_metadata_df,
+PVE(data = my_counts_matrix, metadata = my_metadata_df,
     covariates = c("Age", "Sex"), numeric_covariates = "Age",
     cutoff = 5, output_dir = "path/to/output", rank = 10)
 }

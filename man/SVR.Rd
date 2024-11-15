@@ -8,6 +8,8 @@ Iterative regression to assess covariate variance colinearilty}
 SVR(data, metadata, covariates, numeric_covariates, output_dir, rank = 10)
 }
 \arguments{
+\item{data}{Matrix of normalized RNA-seq data with genes in rows and samples in columns.}
+
 \item{metadata}{Dataframe of metadata for RNA-seq samples. Samples should be in rows and covariates in columns.}
 
 \item{covariates}{List of covariates in `metadata` to be assessed.}
@@ -17,13 +19,9 @@ SVR(data, metadata, covariates, numeric_covariates, output_dir, rank = 10)
 \item{output_dir}{Path to save output files.}
 
 \item{rank}{Integer specifying the number of PCs to retain (from PCAtools). Default is 10. Use NULL for all PCs.}
-
-\item{counts}{Matrix of normalized RNA-seq data with genes in rows and samples in columns.}
-
-\item{cutoff}{Optional threshold for a horizontal line in the variance barplot. Default is NULL.}
 }
 \value{
-Dataframe with `variable` and `variance_explained` columns; generates a screeplot and a variance barplot.
+Dataframe of covariates ordered by greatest association with variance after each iterative regression.
 }
 \description{
 Stepwise Variance Regression
@@ -31,7 +29,7 @@ Iterative regression to assess covariate variance colinearilty
 }
 \examples{
 # Example usage:
-PVE(counts = my_counts_matrix, metadata = my_metadata_df,
+SVR(data = my_counts_matrix, metadata = my_metadata_df,
     covariates = c("Age", "Sex"), numeric_covariates = "Age",
-    cutoff = 5, output_dir = "path/to/output", rank = 10)
+    output_dir = "path/to/output", rank = 10)
 }
