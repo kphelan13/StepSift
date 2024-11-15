@@ -35,7 +35,7 @@ This final value represents the percentage of variance in the sequencing data th
 The counts matrix should be any normalized dataset (ie Log2 normalized counts per million) with observations (ie genes) in rows and the samples in columns. The metadata should have matched sample IDs as rows with covarite IDs in the columns.
 
 These functions have some dependencies, please make sure the following are installed: DESeq2, tidyverse, Biobase, stringi, dplyr, PCAtools, scales
-ggplot2. The function 'install_required_packages' can do this for you.
+ggplot2. The function 'install_required_packages' can do this for you. Version-appropriate Rtools should also be installed.
 
 Any comments, questions, or suggestions? Please email me at phelankj@mail.uc.edu
 
@@ -63,4 +63,9 @@ library(StepSift)
 PVE(counts = my_counts_matrix, metadata = my_metadata_df,
     covariates = c("Age", "Sex"), numeric_covariates = "Age",
     cutoff = 5, output_dir = "path/to/output", rank = 10)
+
+# Run the SVR function
+SVR(data = my_counts_matrix, metadata = my_metadata_df,
+    covariates = c("Age", "Sex"), numeric_covariates = "Age",
+    output_dir = "path/to/output", rank = 10)
 
