@@ -34,6 +34,9 @@ This final value represents the percentage of variance in the sequencing data th
 ## Notes for use
 The counts matrix should be any normalized dataset (ie Log2 normalized counts per million) with observations (ie genes) in rows and the samples in columns. The metadata should have matched sample IDs as rows with covarite IDs in the columns.
 
+These functions have some dependencies, please make sure the following are installed: DESeq2, tidyverse, Biobase, stringi, dplyr, PCAtools, scales
+ggplot2. The function 'install_required_packages' can do this for you.
+
 Any comments, questions, or suggestions? Please email me at phelankj@mail.uc.edu
 
 

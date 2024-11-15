@@ -1,0 +1,132 @@
+setwd("V:/Kieran_OPAR_Project/Cilia")
+load('Dat.Rdata')
+
+#Load required packages
+library(DESeq2)
+library(edgeR)
+library(WGCNA)
+library(dendextend)
+library(heatmap3)
+library(limma)
+library(dplyr)
+library(tidyverse)
+library(scales)
+library(sva)
+library(ggrepel)
+library(patchwork)
+library(BIGpicture)
+library(RNAetc)
+
+#Clean Data for Differential Expression and Ensure Metadata and RNAseq data match
+meta <- read.csv('OPAR_CAUSE_Clinchar_26OCT21.csv')
+meta[meta == '.'] <- NA
+meta[meta == '-9'] <- NA
+meta <- na.omit(meta, cols = "RAD_ED")
+meta <- meta[!meta$RAD_ip == '0',]
+meta <- meta[!meta$race == 'Missing',]
+rownames(meta) <- meta$rna_seq_run1_id
+dat <- dat.abund.norm.voom
+int <- intersect(rownames(meta), colnames(dat))
+dat <- dat[,int]
+meta <- meta[int,]
+meta <- meta[colnames(dat),]
+sample_weights <- dat.abund.norm.voom$targets[,21, drop = F]
+sample_weights <- sample_weights[int, ,drop = F]
+meta$sample.weights <- sample_weights$sample.weights
+dat$targets <- meta
+
+#Read in Cilia Genes and Subset Gene Expression Matrix
+cilia_df <- read.csv('genes encoding major components of airway motile cilia.csv')
+cilia_vec <- cilia_df$Symbol
+int <- intersect(rownames(dat), cilia_vec)
+dat <- dat[int,]
+
+#Run Differential Expression Using Limma
+#Fully Adjusted Model RAD ED
+dat$targets$RAD_ED <- factor(dat$targets$RAD_ED, levels = c('1' , '2', '3'))
+dat$targets$RAD_ip <- factor(dat$targets$RAD_ip, levels = c('1' , '2', '3'))
+dat$targets$Type.2.Categorization <- factor(dat$targets$Type.2.Categorization, levels = c('Type2 Low', 'Type2 High'))
+dat$targets$sex <- factor(dat$targets$sex)
+dat$targets$race <- factor(dat$targets$race)
+dat$targets$site_name <- factor(dat$targets$site_name)
+mm <- model.matrix(~RAD_ED + age_enc + race + sex + site_name, 
+                   data = dat$targets)
+y2 <- lmFit(dat, mm)
+y2 <- eBayes(y2)
+top.table <- topTable(y2, coef = 3, n = Inf)
+write.csv(top.table, file = 'RAD_ED_Fully_Adjusted.csv')
+
+#Fully Adjusted Model RAD IP
+mm <- model.matrix(~RAD_ip + age_enc + race + sex + site_name, 
+                   data = dat$targets)
+y2 <- lmFit(dat, mm)
+y2 <- eBayes(y2)
+top.table <- topTable(y2, coef = 3, n = Inf)
+write.csv(top.table, file = 'RAD_IP_Fully_Adjusted.csv')
+
+#Site Adjusted Model RAD ED
+mm <- model.matrix(~RAD_ED + site_name, 
+                   data = dat$targets)
+y2 <- lmFit(dat, mm)
+y2 <- eBayes(y2)
+top.table <- topTable(y2, coef = 3, n = Inf)
+write.csv(top.table, file = 'RAD_ED_Site_Adjusted.csv')
+
+#Site Adjusted Model IP ED
+mm <- model.matrix(~RAD_ip + site_name, 
+                   data = dat$targets)
+y2 <- lmFit(dat, mm)
+y2 <- eBayes(y2)
+top.table <- topTable(y2, coef = 3, n = Inf)
+write.csv(top.table, file = 'RAD_ip_Site_Adjusted.csv')
+
+#StepSift Covariance Analysis
+setwd(setwd("V:/Kieran_OPAR_Project/Cilia/Covariate Analysis"))
+devtools::install_github("kphelan13/StepSift")
+library(StepSift)
+install_required_packages()
+
+#Covariate Analysis
+output_dir = "V:/Kieran_OPAR_Project/Cilia/Covariate Analysis"
+counts <- dat$E
+metadata <- dat$targets
+numeric_covariates <- c(
+  'age_enc',
+  'r_ip_prd',
+  'r_ed_los'
+)
+covariates <- c(
+  'site_name',
+  'race',
+  'sex',
+  'age_enc',
+  'r_ip_prd',
+  'r_ed_los'
+)
+
+#Run StepSift Functions (Rank = 10, explains 75% of variance)
+PVE_result <- PVE(
+  counts = counts,
+  metadata = metadata,
+  covariates = covariates,
+  numeric_covariates = numeric_covariates,
+  cutoff = 10,
+  output_dir = output_dir,
+  rank = NULL
+)
+
+SVR_result <- SVR(
+  data = counts,
+  metadata = metadata,
+  covariates = covariates,
+  numeric_covariates = numeric_covariates,
+  output_dir = output_dir,
+  rank = NULL
+)
+
+#Make a Combined Gene Expression and Metadata File
+merged_df <- merge(t(counts), metadata, by = 0)
+rownames(merged_df) <- merged_df$pid
+write.csv(merged_df, file = 'Cilia_Expression_Dataframe.csv')
+
+
