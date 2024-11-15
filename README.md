@@ -39,6 +39,10 @@ ggplot2. The function 'install_required_packages' can do this for you. Version-a
 
 Any comments, questions, or suggestions? Please email me at phelankj@mail.uc.edu
 
+If you use StepSift in your work, please cite:
+Phelan K (2024). StepSift: A tool for Stepwise Variance Regression and Variance Explained Calculation. R package version 0.1.0. https://github.com/kphelan13/StepSift
+
+
 
 ## Installation
 
